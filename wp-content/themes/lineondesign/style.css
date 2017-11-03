@@ -620,7 +620,7 @@ input, textarea {
     padding: 130px 0px 90px 0px !important; }
 
   .page3 {
-    padding: 0px 0px 90px 0px !important; }
+    padding: 0px 0px 30px 0px !important; }
 
   .page3 .button-1 {
     margin-top: 10px;
@@ -643,7 +643,8 @@ input, textarea {
       font-size: 18px; }
 
   .page4 {
-    max-height: 556px; }
+    max-height: 556px;
+    margin-bottom: 100px; }
 
   .page8 {
     max-height: 516px;
@@ -652,7 +653,7 @@ input, textarea {
       margin-top: -50px; }
 
   .page5 {
-    padding: 130px 0px 40px 0px !important; }
+    padding: 0px 0px 40px 0px !important; }
 
   .page6 {
     padding: 0px 0px 90px 0px !important; }

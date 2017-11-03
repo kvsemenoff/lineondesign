@@ -95,25 +95,26 @@
 	</section>
 
 	<section class="osnovatel">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-3 col-sm-12 col-xs-12">
-				<div class="osnavatel__img">
-					<img src="<?php echo get_template_directory_uri(); ?>/img/dom2.png" alt="">
-				</div>
-			</div>
-			<div class="col-md-9">
-				<p>Основателем и главным дизайнером студии "LineOnDesign" Корсаковой Юлией, было разработано новое направление деятельности - "Готовые интерьерные решения"</p>
+ 		<div class="container">
+  			<div class="row">
+   				<div class="col-md-3 col-sm-12 col-xs-12">
+				    <div class="osnavatel__img">
+     					<img src="<?php echo get_template_directory_uri(); ?>/img/dom2.png" alt="">
+    				</div>
+   				</div>
+   				<div class="col-md-9">
+    				<p>Основателем и главным дизайнером студии "LineOnDesign" Корсаковой Юлией, было разработано новое направление деятельности - "Готовые интерьерные решения"</p>
 
-				<p>На данный момент Вашему вниманию представлены три варианта готовых интерьеров. 
-				Алгоритм прост: Вы выбираете понравившийся «дизайн», который можно будет 
-				адаптировать под Вашу, конкретную, планировку и получаете подробные архитектурные планы, коллажи и 3D эскизы по каждому помещению, а также помощь в ремонтных 
-				работах.</p> 
-			</div>
-		</div>
-	</div>
-	</section>
+   					 <p>На данный момент Вашему вниманию представлены три варианта готовых интерьеров. 
+   						 Алгоритм прост: Вы выбираете понравившийся «дизайн», который можно будет 
+   						 адаптировать под Вашу, конкретную, планировку и получаете подробные архитектурные планы, коллажи и 3D эскизы по каждому помещению, а также помощь в ремонтных 
+    					работах.</p> 
+   				</div>
+  			</div>
+ 		</div>
+ 	</section>
 
+	
 	<section class="page2">
 		<div class="container">
 			<div class="row">
@@ -175,35 +176,6 @@
 				</div>
 				
 
-			</div>
-		</div>
-	</section>
-
-	<section class="page4-0">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<h2>5 СМЕЛЫХ ФАНТАЗИЙ </h2><span class="sub-title">Которые мы уже реализовали для наших клиентов</span>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<section class="page4">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-4 col-md-push-7 col-sm-12 col-xs-12">
-					<form action="#" class="black-form form3">
-						<span class="close"></span>
-						<span class="form-title">Пришлите нам свою <br> идею, и мы обязательно <br>ее реализуем</span>
-						<input type="text" name="uname" placeholder="Введите Ваш имя">
-						<input type="text" name="tel" placeholder="Введите Ваш телефон" class="phone">
-						<textarea name="text" placeholder="Опишите Вашу идею"></textarea>
-						<input type="hidden" name="form" value="Форма - 5 СМЕЛЫХ ФАНТАЗИЙ">
-						<input type="hidden" name="page" value="<?php echo $page; ?>">
-						<input type="submit" id="form3_submit" class="button-2" value="Отправить идею">
-					</form>
-				</div>
 			</div>
 		</div>
 	</section>
@@ -332,6 +304,35 @@
 		</div>
 	</section>
 
+	<section class="page4-0">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<h2>5 СМЕЛЫХ ФАНТАЗИЙ </h2><span class="sub-title">Которые мы уже реализовали для наших клиентов</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="page4">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 col-md-push-7 col-sm-12 col-xs-12">
+					<form action="#" class="black-form form3">
+						<span class="close"></span>
+						<span class="form-title">Пришлите нам свою <br> идею, и мы обязательно <br>ее реализуем</span>
+						<input type="text" name="uname" placeholder="Введите Ваш имя">
+						<input type="text" name="tel" placeholder="Введите Ваш телефон" class="phone">
+						<textarea name="text" placeholder="Опишите Вашу идею"></textarea>
+						<input type="hidden" name="form" value="Форма - 5 СМЕЛЫХ ФАНТАЗИЙ">
+						<input type="hidden" name="page" value="<?php echo $page; ?>">
+						<input type="submit" id="form3_submit" class="button-2" value="Отправить идею">
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
 	<section class="page6">
 		<div class="container">
 			<div class="row">
@@ -363,7 +364,7 @@
 				</div>
 				<div class="cleafix"></div>
 				<div class="col-md-12 col-sm-12 col-xs-12">
-					<div id="owl-review" class="wow bounceInUp"  data-wow-duration="1.5s" data-wow-delay="0.2s">
+					<div id="owl-review" class="wow bounceInUp"  data-wow-duration="1s" data-wow-delay="0.2s">
 						<?php wp_reset_query(); ?>
 						<?php $wp_query = new WP_Query(array(
 				        	'post_type' => 'review'
