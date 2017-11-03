@@ -1,0 +1,2 @@
+UPDATE wp_posts SET guid = REPLACE(guid, 'alex-auto55.ru', 'alex-avto3.loc');
+UPDATE wp_options SET option_value = REPLACE(option_value, 'alex-auto55.ru', 'alex-avto3.loc');
