@@ -93,7 +93,7 @@
 			</div>
 		</div>
 	</section>
-
+	<?php require_once('osnovatel.php') ?>
 	<section class="page2">
 		<div class="container">
 			<div class="row">
