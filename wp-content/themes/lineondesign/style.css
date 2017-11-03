@@ -151,7 +151,7 @@ h3 {
   .page2 .work-item {
     width: 100%;
     height: 100%;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     overflow: hidden;
     position: relative; }
     .page2 .work-item img {
@@ -485,7 +485,7 @@ input, textarea {
 
 .findout-box {
   width: 100%;
-  min-height: 425px;
+  min-height: 400px;
   overflow: hidden;
   border: 2px solid #3b3b3b;
   margin-bottom: 45px;
@@ -556,10 +556,6 @@ input, textarea {
   h2 {
     font-size: 30px;
     margin-bottom: 55px !important; }
-
-  .findout-box {
-    min-height: 415px;
-    max-height: 415px; }
 
   .button-1 {
     padding: 22px 33px !important; }
@@ -725,24 +721,5 @@ input, textarea {
         text-align: left; }
         #owl-review .item .item-inner .desc .title {
           padding-top: 25px; } }
-/* Large Devices, Wide Screens */
-/***************/
 
 /*# sourceMappingURL=style.css.map */
-@media only screen and (min-width : 768px) {
-	.page2 .work-item {
-		max-height: 200px !important;
-	}
-}
-@media only screen and (min-width : 1005px) {
-	.page2 .work-item {
-		max-height: 180px !important;
-	}
-}
-
-
-@media only screen and (min-width : 1220px) {
-	.page2 .work-item {
-		max-height: 230px !important;
-	}
-}
