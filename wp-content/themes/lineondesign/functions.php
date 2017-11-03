@@ -15,7 +15,9 @@ if ( function_exists( 'add_theme_support' ) ) {
     add_theme_support( 'post-thumbnails' );
 set_post_thumbnail_size( 220, 147);
 }
-
+function q(){
+    echo "1";
+}
 function my_function_admin_bar(){
 return false;
 }
