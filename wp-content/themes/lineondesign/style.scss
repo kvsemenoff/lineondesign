@@ -895,5 +895,27 @@ input, textarea{
     }
 }
 
+.osnovatel{
+    padding-top: 120px;
+    width: 100%;
+    p{
+        margin-bottom: 28px;
+        font-size: 21px;
+    }
+    .osnavatel__img{
+        width:100%;
+        text-align: center;
+    }
+    @media only screen and (min-width : 768px) {
+        p{
+            padding-left: 30px;
+        }
+    }
+    @media only screen and (min-width : 1300px) {
+        p{
+            padding-left: unset;
+        }
+    }
+}
 
 

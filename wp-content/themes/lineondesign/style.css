@@ -721,5 +721,20 @@ input, textarea {
         text-align: left; }
         #owl-review .item .item-inner .desc .title {
           padding-top: 25px; } }
+.osnovatel {
+  padding-top: 120px;
+  width: 100%; }
+  .osnovatel p {
+    margin-bottom: 28px;
+    font-size: 21px; }
+  .osnovatel .osnavatel__img {
+    width: 100%;
+    text-align: center; }
+  @media only screen and (min-width: 768px) {
+    .osnovatel p {
+      padding-left: 30px; } }
+  @media only screen and (min-width: 1300px) {
+    .osnovatel p {
+      padding-left: unset; } }
 
 /*# sourceMappingURL=style.css.map */
