@@ -896,7 +896,10 @@ input, textarea{
 }
 
 .osnovatel{
-    padding-top: 120px;
+    @media only screen and (min-width : 960px) {
+        padding-top: 120px;
+    }
+    padding-top: 30px;
     width: 100%;
     p{
         margin-bottom: 28px;
@@ -916,6 +919,7 @@ input, textarea{
             padding-left: unset;
         }
     }
+
 }
 
 
