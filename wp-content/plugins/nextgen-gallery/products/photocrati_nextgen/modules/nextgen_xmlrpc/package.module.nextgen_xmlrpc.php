@@ -1,18 +1,22 @@
 <?php
 /**
  * Provides AJAX actions for JSON API interface
+ * @mixin C_Ajax_Controller
+ * @adapts I_Ajax_Controller
  */
 class A_NextGen_API_Ajax extends Mixin
 {
-    public $nextgen_api = NULL;
-    public function get_nextgen_api()
+    var $nextgen_api = NULL;
+    var $_nextgen_api_locked = false;
+    var $_shutdown_registered = false;
+    function get_nextgen_api()
     {
         if (is_null($this->nextgen_api)) {
             $this->nextgen_api = C_NextGen_API::get_instance();
         }
         return $this->nextgen_api;
     }
-    public function get_nextgen_api_path_list_action()
+    function get_nextgen_api_path_list_action()
     {
         $api = $this->get_nextgen_api();
         $username = $this->object->param('q');
@@ -73,7 +77,7 @@ class A_NextGen_API_Ajax extends Mixin
         }
         return $response;
     }
-    public function enqueue_nextgen_api_task_list_action()
+    function enqueue_nextgen_api_task_list_action()
     {
         $api = $this->get_nextgen_api();
         $username = $this->object->param('q');
@@ -103,7 +107,7 @@ class A_NextGen_API_Ajax extends Mixin
                             break;
                         case 'gallery_remove':
                         case 'gallery_edit':
-                            $query_id = $api->get_query_id($task_query['id']);
+                            $query_id = $api->get_query_id($task_query['id'], $task_list);
                             $gallery = null;
                             // The old NextGEN XMLRPC API had this logic so replicating it here for safety
                             if ($query_id) {
@@ -135,13 +139,26 @@ class A_NextGen_API_Ajax extends Mixin
                     $task_item['auth'] = $task_auth ? 'allow' : 'forbid';
                 }
                 if ($task_count == $auth_count) {
-                    $job_id = $api->add_job(array('user' => $user_obj->ID), $app_config, $task_list);
+                    $job_id = $api->add_job(array('user' => $user_obj->ID, 'clientid' => $this->object->param('clientid')), $app_config, $task_list);
                     if ($job_id != null) {
+                        $post_back = $api->get_job_post_back($job_id);
                         $handler_delay = defined('NGG_API_JOB_HANDLER_DELAY') ? intval(NGG_API_JOB_HANDLER_DELAY) : 0;
                         $handler_delay = $handler_delay > 0 ? $handler_delay : 30;
                         /* in seconds */
                         $response['result'] = 'ok';
-                        $response['result_object'] = array('job_id' => $job_id, 'job_handler_url' => home_url('/photocrati_ajax?action=execute_nextgen_api_task_list'), 'job_handler_delay' => $handler_delay);
+                        $response['result_object'] = array('job_id' => $job_id, 'job_post_back' => $post_back, 'job_handler_url' => home_url('?photocrati_ajax=1&action=execute_nextgen_api_task_list'), 'job_handler_delay' => $handler_delay);
+                        if (!defined('NGG_API_SUPPRESS_QUICK_EXECUTE') || NGG_API_SUPPRESS_QUICK_EXECUTE == false) {
+                            if (!$api->is_execution_locked()) {
+                                $this->_start_locked_execute();
+                                $result = $api->handle_job($job_id, $api->get_job_data($job_id), $app_config, $api->get_job_task_list($job_id));
+                                if ($result) {
+                                    $response['result_object']['job_result'] = $api->get_job_task_list($job_id);
+                                    // everything was finished, remove job
+                                    $api->remove_job($job_id);
+                                }
+                                $this->_stop_locked_execute();
+                            }
+                        }
                     } else {
                         $response['result'] = 'error';
                         $response['error'] = array('code' => C_NextGen_API::ERR_JOB_NOT_ADDED, 'message' => __('Job could not be added.', 'nggallery'));
@@ -160,7 +177,29 @@ class A_NextGen_API_Ajax extends Mixin
         }
         return $response;
     }
-    public function execute_nextgen_api_task_list_action()
+    function _do_shutdown()
+    {
+        if ($this->_nextgen_api_locked) {
+            $this->get_nextgen_api()->set_execution_locked(false);
+        }
+    }
+    function _start_locked_execute()
+    {
+        $api = $this->get_nextgen_api();
+        if (!$this->_shutdown_registered) {
+            register_shutdown_function(array($this, '_do_shutdown'));
+            $this->_shutdown_registered = true;
+        }
+        $api->set_execution_locked(true);
+        $this->_nextgen_api_locked = true;
+    }
+    function _stop_locked_execute()
+    {
+        $api = $this->get_nextgen_api();
+        $api->set_execution_locked(false);
+        $this->_nextgen_api_locked = false;
+    }
+    function execute_nextgen_api_task_list_action()
     {
         $api = $this->get_nextgen_api();
         $job_list = $api->get_job_list();
@@ -170,25 +209,36 @@ class A_NextGen_API_Ajax extends Mixin
             $response['info'] = array('code' => C_NextGen_API::INFO_EXECUTION_LOCKED, 'message' => __('Job execution is locked.', 'nggallery'));
         } else {
             if ($job_list != null) {
-                $api->set_execution_locked(true);
+                $this->_start_locked_execute();
                 $job_count = count($job_list);
                 $done_count = 0;
+                $client_result = array();
                 foreach ($job_list as $job) {
-                    $result = $api->handle_job($job['id'], $job['data'], $job['app_config'], $job['task_list']);
+                    $job_id = $job['id'];
+                    $job_data = $job['data'];
+                    $result = $api->handle_job($job_id, $job_data, $job['app_config'], $job['task_list']);
                     if ($result) {
                         $done_count++;
+                        if (isset($job_data['clientid']) && $job_data['clientid'] == $this->object->param('clientid')) {
+                            $client_result[$job_id] = $api->get_job_task_list($job_id);
+                        }
+                        // everything was finished, remove job
+                        $api->remove_job($job_id);
                     }
                     if ($api->should_stop_execution()) {
                         break;
                     }
                 }
-                $api->set_execution_locked(false);
+                $this->_stop_locked_execute();
                 if ($done_count == $job_count) {
                     $response['result'] = 'ok';
                     $response['info'] = array('code' => C_NextGen_API::INFO_JOB_LIST_FINISHED, 'message' => __('Job list is finished.', 'nggallery'));
                 } else {
                     $response['result'] = 'ok';
                     $response['info'] = array('code' => C_NextGen_API::INFO_JOB_LIST_UNFINISHED, 'message' => __('Job list is unfinished.', 'nggallery'));
+                }
+                if (!defined('NGG_API_SUPPRESS_QUICK_SUMMARY') || NGG_API_SUPPRESS_QUICK_SUMMARY == false) {
+                    $response['result_object'] = $client_result;
                 }
             } else {
                 $response['result'] = 'ok';
@@ -198,10 +248,14 @@ class A_NextGen_API_Ajax extends Mixin
         return $response;
     }
 }
+/**
+ * Class C_NextGen_API
+ * @implements I_NextGen_API
+ */
 class C_NextGen_API extends C_Component
 {
     const CRON_KEY = 'nextgen.api.task_list';
-    /* NOTE: these constants' numeric values are used elsewhere, don't change the values */
+    /* NOTE: these constants' numeric values MUST remain the same, do NOT change the values */
     const ERR_NO_TASK_LIST = 1001;
     const ERR_NOT_AUTHENTICATED = 1002;
     const ERR_NOT_AUTHORIZED = 1003;
@@ -214,28 +268,28 @@ class C_NextGen_API extends C_Component
     const INFO_JOB_LIST_UNFINISHED = 6003;
     const INFO_EXECUTION_LOCKED = 6004;
     public static $_instances = array();
-    public $_start_time;
+    var $_start_time;
     public static function get_instance($context = false)
     {
         if (!isset(self::$_instances[$context])) {
-            self::$_instances[$context] = new self($context);
+            self::$_instances[$context] = new C_NextGen_API($context);
         }
         return self::$_instances[$context];
     }
-    public function define($context = false)
+    function define($context = false)
     {
         parent::define($context);
         $this->implement('I_NextGen_API');
         $this->_start_time = time();
     }
-    public function should_stop_execution()
+    function should_stop_execution()
     {
         $timeout = defined('NGG_API_JOB_HANDLER_TIMEOUT') ? intval(NGG_API_JOB_HANDLER_TIMEOUT) : intval(ini_get('max_execution_time')) - 3;
         $timeout = $timeout > 0 ? $timeout : 27;
         /* most hosts have a limit of 30 seconds execution time, so 27 should be a safe default */
         return time() - $this->_start_time >= $timeout;
     }
-    public function is_execution_locked()
+    function is_execution_locked()
     {
         $lock_time = get_option('ngg_api_execution_lock', 0);
         if ($lock_time == 0) {
@@ -250,7 +304,7 @@ class C_NextGen_API extends C_Component
         }
         return true;
     }
-    public function set_execution_locked($locked)
+    function set_execution_locked($locked)
     {
         if ($locked) {
             update_option('ngg_api_execution_lock', time());
@@ -258,23 +312,23 @@ class C_NextGen_API extends C_Component
             update_option('ngg_api_execution_lock', 0);
         }
     }
-    public function get_job_list()
+    function get_job_list()
     {
         return get_option('ngg_api_job_list');
     }
-    public function add_job($job_data, $app_config, $task_list)
+    function add_job($job_data, $app_config, $task_list)
     {
         $job_list = $this->get_job_list();
         $job_id = uniqid();
         while (isset($job_list[$job_id])) {
             $job_id = uniqid();
         }
-        $job = array('id' => $job_id, 'data' => $job_data, 'app_config' => $app_config, 'task_list' => $task_list);
+        $job = array('id' => $job_id, 'post_back' => array('token' => md5($job_id)), 'data' => $job_data, 'app_config' => $app_config, 'task_list' => $task_list);
         $job_list[$job_id] = $job;
         update_option('ngg_api_job_list', $job_list);
         return $job_id;
     }
-    public function _update_job($job_id, $job)
+    function _update_job($job_id, $job)
     {
         $job_list = $this->get_job_list();
         if (isset($job_list[$job_id])) {
@@ -282,7 +336,7 @@ class C_NextGen_API extends C_Component
             update_option('ngg_api_job_list', $job_list);
         }
     }
-    public function remove_job($job_id)
+    function remove_job($job_id)
     {
         $job_list = $this->get_job_list();
         if (isset($job_list[$job_id])) {
@@ -290,7 +344,7 @@ class C_NextGen_API extends C_Component
             update_option('ngg_api_job_list', $job_list);
         }
     }
-    public function get_job($job_id)
+    function get_job($job_id)
     {
         $job_list = $this->get_job_list();
         if (isset($job_list[$job_id])) {
@@ -298,7 +352,7 @@ class C_NextGen_API extends C_Component
         }
         return null;
     }
-    public function get_job_data($job_id)
+    function get_job_data($job_id)
     {
         $job = $this->get_job($job_id);
         if ($job != null) {
@@ -306,7 +360,7 @@ class C_NextGen_API extends C_Component
         }
         return null;
     }
-    public function get_job_task_list($job_id)
+    function get_job_task_list($job_id)
     {
         $job = $this->get_job($job_id);
         if ($job != null) {
@@ -314,7 +368,7 @@ class C_NextGen_API extends C_Component
         }
         return null;
     }
-    public function set_job_task_list($job_id, $task_list)
+    function set_job_task_list($job_id, $task_list)
     {
         $job = $this->get_job($job_id);
         if ($job != null) {
@@ -324,15 +378,15 @@ class C_NextGen_API extends C_Component
         }
         return false;
     }
-    public function get_job_status_file($job_id)
+    function get_job_post_back($job_id)
     {
         $job = $this->get_job($job_id);
         if ($job != null) {
-            return $job['task_list'];
+            return $job['post_back'];
         }
         return null;
     }
-    public function create_filesystem_access($args, $method = null)
+    function create_filesystem_access($args, $method = null)
     {
         // taken from wp-admin/includes/file.php but with modifications
         if (!$method && isset($args['connection_type']) && 'ssh' == $args['connection_type'] && extension_loaded('ssh2') && function_exists('stream_get_contents')) {
@@ -384,23 +438,24 @@ class C_NextGen_API extends C_Component
                 return $this->create_filesystem_access($args, 'ftpsockets');
             }
             return false;
+            //There was an error connecting to the server.
         }
         // Set the permission constants if not already set.
         if (!defined('FS_CHMOD_DIR')) {
-            define('FS_CHMOD_DIR', fileperms(ABSPATH) & 511 | 493);
+            define('FS_CHMOD_DIR', fileperms(ABSPATH) & 0777 | 0755);
         }
         if (!defined('FS_CHMOD_FILE')) {
-            define('FS_CHMOD_FILE', fileperms(ABSPATH . 'index.php') & 511 | 420);
+            define('FS_CHMOD_FILE', fileperms(ABSPATH . 'index.php') & 0777 | 0644);
         }
         return $wp_filesystem;
     }
     // returns an actual scalar ID based on parametric ID (e.g. a parametric ID could represent the query ID from another task)
-    public function get_query_id($id, &$task_list)
+    function get_query_id($id, &$task_list)
     {
         $task_id = $id;
         if (is_object($task_id) || is_array($task_id)) {
             $id = null;
-            // it was specified that the query ID is referencing the result from another task
+            // it was specified that the query ID is referencing the query ID from another task
             if (isset($task_id['target']) && $task_id['target'] == 'task') {
                 if (isset($task_id['id']) && isset($task_list[$task_id['id']])) {
                     $target_task = $task_list[$task_id['id']];
@@ -413,7 +468,7 @@ class C_NextGen_API extends C_Component
         return $id;
     }
     // returns an actual scalar ID based on parametric ID (e.g. a parametric ID could represent the resulting object ID from another task)
-    public function get_object_id($id, &$result_list)
+    function get_object_id($id, &$result_list)
     {
         $task_id = $id;
         if (is_object($task_id) || is_array($task_id)) {
@@ -430,7 +485,8 @@ class C_NextGen_API extends C_Component
         }
         return $id;
     }
-    public function handle_job($job_id, $job_data, $app_config, $task_list)
+    // Note: handle_job only worries about processing the job, it does NOT remove finished jobs anymore, the responsibility is on the caller to remove the job when handle_job returns true, this is to allow calling get_job_*() methods after handle_job has been called
+    function handle_job($job_id, $job_data, $app_config, $task_list)
     {
         $job_user = $job_data['user'];
         $task_count = count($task_list);
@@ -461,7 +517,12 @@ class C_NextGen_API extends C_Component
             $wp_fs = $GLOBALS['wp_filesystem'];
             $path_prefix = $full_path;
             if ($wp_fs->method === 'direct') {
-                $path_prefix = str_replace($ftp_path, $root_path, $full_path);
+                if (trim($ftp_path, " \t\n\r\v\\") == '') {
+                    // Note: if ftp_path is empty, we assume the FTP account home dir is on wp-content
+                    $path_prefix = $root_path . $full_path;
+                } else {
+                    $path_prefix = str_replace($ftp_path, $root_path, $full_path);
+                }
             }
         }
         foreach ($task_list as &$task_item) {
@@ -583,7 +644,7 @@ class C_NextGen_API extends C_Component
                                                 $image_id = null;
                                             }
                                             $image_error = null;
-                                            if ($image_action == 'delete') {
+                                            if ($image_action == "delete") {
                                                 // image was deleted
                                                 if ($ngg_image != null) {
                                                     $settings = C_NextGen_Settings::get_instance();
@@ -620,11 +681,13 @@ class C_NextGen_API extends C_Component
                                                         $image_error = $e->getMessage . __(' (%1$s).', 'nggallery');
                                                     } catch (E_No_Image_Library_Exception $e) {
                                                         $error = __('No image library present, image uploads will fail (%1$s).', 'nggallery');
+                                                        // no point in continuing if the image library is not present but we don't break here to ensure that all images are processed (otherwise they'd be processed in further fruitless handle_job calls)
                                                     } catch (E_InsufficientWriteAccessException $e) {
                                                         $image_error = __('Inadequate system permissions to write image (%1$s).', 'nggallery');
                                                     } catch (E_InvalidEntityException $e) {
                                                         $image_error = __('Requested image with id (%2$s) doesn\'t exist (%1$s).', 'nggallery');
                                                     } catch (E_EntityNotFoundException $e) {
+                                                        // gallery doesn't exist - already checked above so this should never happen
                                                     }
                                                     // delete temporary image
                                                     $wp_fs->delete($image_path);
@@ -821,8 +884,7 @@ class C_NextGen_API extends C_Component
             // unfinished tasks, return false
             return false;
         } else {
-            // everything was finished, remove job and write status file
-            $this->remove_job($job_id);
+            // everything was finished, write status file
             $status_file = '_ngg_job_status_' . strval($job_id) . '.txt';
             $status_content = json_encode($task_list);
             if ($wp_fs != null) {
@@ -839,10 +901,14 @@ class C_NextGen_API extends C_Component
         }
     }
 }
+/**
+ * Class C_NextGen_API_XMLRPC
+ * @implements I_NextGen_API_XMLRPC
+ */
 class C_NextGen_API_XMLRPC extends C_Component
 {
     public static $_instances = array();
-    public function define($context = false)
+    function define($context = false)
     {
         parent::define($context);
         $this->implement('I_NextGen_API_XMLRPC');
@@ -850,7 +916,7 @@ class C_NextGen_API_XMLRPC extends C_Component
     public static function get_instance($context = false)
     {
         if (!isset(self::$_instances[$context])) {
-            self::$_instances[$context] = new self($context);
+            self::$_instances[$context] = new C_NextGen_API_XMLRPC($context);
         }
         return self::$_instances[$context];
     }
@@ -858,7 +924,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Gets the version of NextGEN Gallery installed
      * @return string
      */
-    public function get_version()
+    function get_version()
     {
         return array('version' => NGG_PLUGIN_VERSION);
     }
@@ -868,7 +934,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * @param $password
      * @return bool|WP_Error|WP_User
      */
-    public function _login($username, $password, $blog_id = 1)
+    function _login($username, $password, $blog_id = 1)
     {
         $retval = FALSE;
         if (!is_a($user_obj = wp_authenticate($username, $password), 'WP_Error')) {
@@ -880,7 +946,7 @@ class C_NextGen_API_XMLRPC extends C_Component
         }
         return $retval;
     }
-    public function _can_manage_gallery($gallery_id_or_obj, $check_upload_capability = FALSE)
+    function _can_manage_gallery($gallery_id_or_obj, $check_upload_capability = FALSE)
     {
         $retval = FALSE;
         // Get the gallery object, if we don't have it already
@@ -906,7 +972,7 @@ class C_NextGen_API_XMLRPC extends C_Component
         }
         return $retval;
     }
-    public function _add_gallery_properties($gallery)
+    function _add_gallery_properties($gallery)
     {
         if (is_object($gallery)) {
             $image_mapper = C_Image_Mapper::get_instance();
@@ -916,7 +982,7 @@ class C_NextGen_API_XMLRPC extends C_Component
             // his plugin
             $gallery->gid = (string) $gallery->gid;
             // Set other gallery properties
-            $image_counter = array_pop($image_mapper->select('DISTINCT COUNT(*) as counter')->where(array('galleryid = %d', $gallery->gid))->run_query(FALSE, FALSE, TRUE));
+            $image_counter = array_pop($image_mapper->select('DISTINCT COUNT(*) as counter')->where(array("galleryid = %d", $gallery->gid))->run_query(FALSE, FALSE, TRUE));
             $gallery->counter = $image_counter->counter;
             $gallery->abspath = $storage->get_gallery_abspath($gallery);
         } else {
@@ -928,7 +994,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Returns a single image object
      * @param $args (blog_id, username, password, pid)
      */
-    public function get_image($args, $return_model = FALSE)
+    function get_image($args, $return_model = FALSE)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -969,7 +1035,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Returns a collection of images
      * @param $args (blog_id, username, password, gallery_id
      */
-    public function get_images($args)
+    function get_images($args)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -999,14 +1065,14 @@ class C_NextGen_API_XMLRPC extends C_Component
      *
      * Data is an assoc array:
      *			  o string name
-     *			o string type (optional)
+     *			  o string type (optional)
      *			  o base64 bits
      *			  o bool overwrite (optional)
      *			  o int gallery
      *			  o int image_id  (optional)
      * @return image
      */
-    public function upload_image($args)
+    function upload_image($args)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -1020,6 +1086,9 @@ class C_NextGen_API_XMLRPC extends C_Component
         if (!isset($data['overwrite'])) {
             $data['overwrite'] = FALSE;
         }
+        if (!isset($data['image_id'])) {
+            $data['image_id'] = FALSE;
+        }
         $data['override'] = $data['overwrite'];
         // Authenticate the user
         if ($this->_login($username, $password, $blog_id)) {
@@ -1030,22 +1099,27 @@ class C_NextGen_API_XMLRPC extends C_Component
                 if ($this->_can_manage_gallery($gallery, TRUE)) {
                     // Upload the image
                     $storage = C_Gallery_Storage::get_instance();
-                    $image = $storage->upload_base64_image($gallery, $data['bits'], $data['name'], $data['image_id'], $data['override']);
-                    if ($image) {
-                        $storage = C_Gallery_Storage::get_instance();
-                        $image->imageURL = $storage->get_image_url($image);
-                        $image->thumbURL = $storage->get_thumb_url($image);
-                        $image->imagePath = $storage->get_image_abspath($image);
-                        $image->thumbPath = $storage->get_thumb_abspath($image);
-                        $retval = $image->get_entity();
-                    } else {
-                        $retval = new IXR_Error(500, 'Could not upload image');
+                    try {
+                        $image = $storage->upload_base64_image($gallery, $data['bits'], $data['name'], $data['image_id'], $data['override']);
+                        if ($image) {
+                            $storage = C_Gallery_Storage::get_instance();
+                            $image->imageURL = $storage->get_image_url($image);
+                            $image->thumbURL = $storage->get_thumb_url($image);
+                            $image->imagePath = $storage->get_image_abspath($image);
+                            $image->thumbPath = $storage->get_thumb_abspath($image);
+                            $retval = $image->get_entity();
+                        } else {
+                            $retval = new IXR_Error(500, "Could not upload image");
+                        }
+                    } catch (Exception $exception) {
+                        $retval = new IXR_Error(500, 'Could not upload image: ' . $exception->getMessage());
                     }
                 } else {
-                    $retval = new IXR_Error(403, "You don't have permission to upload to gallery #{$image->galleryid}");
+                    $retval = new IXR_Error(403, "You don't have permission to upload to gallery #{$gallery_id}");
                 }
             } else {
-                $retval = new IXR_Error(404, "Gallery not found (with id #{$image->gallerid}");
+                // No gallery found
+                $retval = new IXR_Error(404, "Gallery not found (with id #{$gallery_id}");
             }
         }
         return $retval;
@@ -1054,7 +1128,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Edits an image object
      * @param $args (blog_id, username, password, image_id, alttext, description, exclude, other_properties
      */
-    public function edit_image($args)
+    function edit_image($args)
     {
         $alttext = strval($args[4]);
         $description = strval($args[5]);
@@ -1081,7 +1155,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Deletes an existing image from a gallery
      * @param $args (blog_id, username, password, image_id)
      */
-    public function delete_image($args)
+    function delete_image($args)
     {
         $retval = $this->get_image($args, TRUE);
         if (!$retval instanceof IXR_Error) {
@@ -1093,7 +1167,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Creates a new gallery
      * @param $args (blog_id, username, password, title)
      */
-    public function create_gallery($args)
+    function create_gallery($args)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -1108,10 +1182,10 @@ class C_NextGen_API_XMLRPC extends C_Component
                 if (($gallery = $mapper->create(array('title' => $title))) && $gallery->save()) {
                     $retval = $gallery->id();
                 } else {
-                    $retval = new IXR_Error(500, 'Unable to create gallery');
+                    $retval = new IXR_Error(500, "Unable to create gallery");
                 }
             } else {
-                $retval = new IXR_Error(403, 'Sorry, but you must be able to manage galleries. Check your roles/capabilities.');
+                $retval = new IXR_Error(403, "Sorry, but you must be able to manage galleries. Check your roles/capabilities.");
             }
         }
         return $retval;
@@ -1120,7 +1194,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Edits an existing gallery
      * @param $args (blog_id, username, password, gallery_id, name, title, description, preview_pic_id)
      */
-    public function edit_gallery($args)
+    function edit_gallery($args)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -1149,7 +1223,7 @@ class C_NextGen_API_XMLRPC extends C_Component
                     unset($gallery->abspath);
                     $retval = $gallery->save();
                 } else {
-                    $retval = new IXR_Error(403, 'You don\'t have permission to modify this gallery');
+                    $retval = new IXR_Error(403, "You don't have permission to modify this gallery");
                 }
             } else {
                 $retval = new IXR_Error(404, "Gallery #{$gallery_id} doesn't exist");
@@ -1161,7 +1235,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Returns all galleries
      * @param $args (blog_id, username, password)
      */
-    public function get_galleries($args)
+    function get_galleries($args)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -1188,7 +1262,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Gets a single gallery instance
      * @param $args (blog_id, username, password, gallery_id)
      */
-    public function get_gallery($args, $return_model = FALSE)
+    function get_gallery($args, $return_model = FALSE)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -1215,7 +1289,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Deletes a gallery
      * @param $args (blog_id, username, password, gallery_id)
      */
-    public function delete_gallery($args)
+    function delete_gallery($args)
     {
         $retval = $this->get_gallery($args, TRUE);
         if (!$retval instanceof IXR_Error and is_object($retval)) {
@@ -1227,7 +1301,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Creates a new album
      * @param $args (blog_id, username, password, title, previewpic, description, galleries
      */
-    public function create_album($args)
+    function create_album($args)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -1248,7 +1322,7 @@ class C_NextGen_API_XMLRPC extends C_Component
                 if ($album->save()) {
                     $retval = $album->id();
                 } else {
-                    $retval = new IXR_Error(500, 'Unable to create album');
+                    $retval = new IXR_Error(500, "Unable to create album");
                 }
             }
         }
@@ -1259,7 +1333,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * @param $args (blog_id, username, password)
      * @return IXR_Error
      */
-    public function get_albums($args)
+    function get_albums($args)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -1282,7 +1356,7 @@ class C_NextGen_API_XMLRPC extends C_Component
                     $retval[$album->{$album->id_field}] = (array) $album;
                 }
             } else {
-                $retval = new IXR_Error(403, 'Sorry, you must be able to manage albums');
+                $retval = new IXR_Error(403, "Sorry, you must be able to manage albums");
             }
         }
         return $retval;
@@ -1291,7 +1365,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Gets a single album
      * @param $args (blog_id, username, password, album_id)
      */
-    public function get_album($args, $return_model = FALSE)
+    function get_album($args, $return_model = FALSE)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -1315,7 +1389,7 @@ class C_NextGen_API_XMLRPC extends C_Component
                     $retval = FALSE;
                 }
             } else {
-                $retval = new IXR_Error(403, 'Sorry, you must be able to manage albums');
+                $retval = new IXR_Error(403, "Sorry, you must be able to manage albums");
             }
         }
         return $retval;
@@ -1324,7 +1398,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Deletes an existing album
      * @param $args (blog_id, username, password, album_id)
      */
-    public function delete_album($args)
+    function delete_album($args)
     {
         $retval = $this->get_album($args, TRUE);
         if (!$retval instanceof IXR_Error) {
@@ -1336,7 +1410,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      * Edit an existing album
      * @param $args (blog_id, username, password, album_id, name, preview pic id, description, galleries)
      */
-    public function edit_album($args)
+    function edit_album($args)
     {
         $retval = $this->get_album($args, TRUE);
         if (!$retval instanceof IXR_Error) {
@@ -1359,7 +1433,7 @@ class C_NextGen_API_XMLRPC extends C_Component
      *
      * @return IXR_Error|int attachment id
      */
-    public function set_post_thumbnail($args)
+    function set_post_thumbnail($args)
     {
         $retval = new IXR_Error(403, 'Invalid username or password');
         $blog_id = intval($args[0]);
@@ -1372,15 +1446,9 @@ class C_NextGen_API_XMLRPC extends C_Component
             if (current_user_can('edit_post', $post_ID)) {
                 $retval = C_Gallery_Storage::get_instance()->set_post_thumbnail($post_ID, $image_id);
             } else {
-                $retval = new IXR_Error(403, 'Sorry but you need permission to do this');
+                $retval = new IXR_Error(403, "Sorry but you need permission to do this");
             }
         }
         return $retval;
     }
-}
-interface I_NextGen_API
-{
-}
-interface I_NextGen_API_XMLRPC
-{
 }

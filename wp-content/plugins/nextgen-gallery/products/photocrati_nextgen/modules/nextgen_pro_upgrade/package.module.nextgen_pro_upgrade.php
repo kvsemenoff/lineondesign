@@ -1,7 +1,13 @@
 <?php
+/**
+ * Class A_NextGen_Pro_Plus_Upgrade_Page
+ * @mixin C_Page_Manager
+ * @adapts I_Page_Manager
+ * @todo merge with A_NextGen_Pro_Upgrade_Page class
+ */
 class A_NextGen_Pro_Plus_Upgrade_Page extends Mixin
 {
-    public function setup()
+    function setup()
     {
         // Using include() to retrieve the is_plugin_active() is apparently The WordPress Way(tm)..
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -19,35 +25,39 @@ class A_NextGen_Pro_Plus_Upgrade_Page extends Mixin
         return $this->call_parent('setup');
     }
 }
+/**
+ * Class A_NextGen_Pro_Upgrade_Controller
+ * @mixin C_NextGen_Admin_Page_Controller
+ * @adapts I_NextGen_Admin_Page_Controller using "ngg_pro_upgrade" context
+ */
 class A_NextGen_Pro_Upgrade_Controller extends Mixin
 {
-    public function enqueue_backend_resources()
+    function enqueue_backend_resources()
     {
         $this->call_parent('enqueue_backend_resources');
         wp_enqueue_style('nextgen_pro_upgrade_page', $this->get_static_url('photocrati-nextgen_pro_upgrade#style.css'), FALSE, NGG_SCRIPT_VERSION);
     }
-    public function get_page_title()
+    function get_page_title()
     {
         return __('Upgrade to Pro', 'nggallery');
     }
-    public function get_required_permission()
+    function get_required_permission()
     {
         return 'NextGEN Change options';
     }
-    public function get_i18n_strings()
+    function get_i18n_strings()
     {
         $i18n = new stdClass();
-        $i18n->plus_title = __('Upgrade to NextGEN Plus or Pro!', 'nggallery');
-        $i18n->pro_title = __('Upgrade to NextGEN Pro!', 'nggallery');
-        $i18n->plus_desc_first = __('Introducing the most powerful gallery system ever made for WordPress.', 'nggallery');
-        $i18n->plus_desc_second = __('Take your galleries to the next level with the Plus and Pro extensions for NextGEN Gallery. ', 'nggallery');
-        $i18n->pro_desc = __('NextGEN Pro now offers proofing and ecommerce! Extend NextGEN Gallery and NextGEN Plus with a complete solution for providing client galleries and for selling prints and digital downloads. Includes unlimited pricelists, PayPal and Stripe integration, and more.', 'nggallery');
-        $i18n->plus_button = __('Learn More About NextGEN Plus', 'nggallery');
-        $i18n->pro_button = __('Learn More About NextGEN Pro', 'nggallery');
-        $i18n->click = __('CLICK TO LEARN MORE:', 'nggallery');
+        $i18n->plus_title = __('Setting a New Standard for WordPress Galleries', 'nggallery');
+        $i18n->pro_title = __('Sell Photos + Adobe Lightroom', 'nggallery');
+        $i18n->plus_desc_first = __('Introducing the most powerful gallery system ever made for WordPress. Watch our 30 second video, or click below to learn more about NextGEN premium extensions and support.', 'nggallery');
+        $i18n->pro_desc = __('You\'re awesome! You\'ve already got NextGEN Plus. But why not go all the way? With NextGEN Pro, you can sell print and digital downloads, provide proofing galleries for clients, manage galleries directly from Adobe Lightroom, and more.', 'nggallery');
+        $i18n->video = __('Psst...watch the video ->', 'nggallery');
+        $i18n->plus_button = __('Get Premium Extensions', 'nggallery');
+        $i18n->pro_button = __('Learn More', 'nggallery');
         return $i18n;
     }
-    public function index_action()
+    function index_action()
     {
         $this->object->enqueue_backend_resources();
         $key = C_Photocrati_Transient_Manager::create_key('nextgen_pro_upgrade_page', 'html');
@@ -67,9 +77,15 @@ class A_NextGen_Pro_Upgrade_Controller extends Mixin
         }
     }
 }
+/**
+ * Class A_NextGen_Pro_Upgrade_Page
+ * @mixin C_NextGen_Admin_Page_Controller
+ * @adapts I_NextGen_Admin_Page_Controller
+ * @todo merge with A_NextGen_Pro_Plus_Upgrade_Page class
+ */
 class A_NextGen_Pro_Upgrade_Page extends Mixin
 {
-    public function setup()
+    function setup()
     {
         // Using include() to retrieve the is_plugin_active() is apparently The WordPress Way(tm)..
         include_once ABSPATH . 'wp-admin/includes/plugin.php';

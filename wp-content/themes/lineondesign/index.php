@@ -118,13 +118,29 @@
 	<section class="page2">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<h2>Наши работы</h2>
+				<div class="col-md-12">
+					<h2>НАШИ ГОТОВЫЕ ПРОЕКТЫ</h2>
+					<span class="sub-title">Выберите понравившийся стиль</span>
 				</div>
-				<div class="clearfix"></div>
-				<?php if ($id_gal != "") { ?>
-			      <?php echo do_shortcode('[nggallery id="'.$id_gal.'" template="zangal4"]'); ?>
-			      <? } ?>
+				
+				<div class="col-md-4">
+					<div class="project-item">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/t1.jpg" alt="">
+						<a href="#" href="#">Совеременная <br>классика</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="project-item">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/t2.jpg" alt="">
+						<a href="#" href="#">Минимализм</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="project-item">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/t3.jpg" alt="">
+						<a href="#" href="#">Чистые линии</a>
+					</div>
+				</div>
 				<div class="clearfix"></div>
 			</div>
 		</div>
