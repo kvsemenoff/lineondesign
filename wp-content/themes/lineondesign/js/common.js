@@ -59,9 +59,9 @@ $(document).ready(function(){
     $('a[data-name="packageModal"]').click(function(e) {
         e.preventDefault();
 
-        eventFire(document.getElementById('arrow-next1'), 'click');
-        eventFire(document.getElementById('arrow-next2'), 'click');
-        eventFire(document.getElementById('arrow-next2'), 'click');
+        $('.arrow-next').click ();
+        
+   
 
         var id = $(this).attr('href');
         var maskHeight = $(document).height();
@@ -87,15 +87,7 @@ $(document).ready(function(){
         $('.window').hide();
     }); 
 
-    function eventFire(el, etype){
-      if (el.fireEvent) {
-        el.fireEvent('on' + etype);
-      } else {
-        var evObj = document.createEvent('Events');
-        evObj.initEvent(etype, true, false);
-        el.dispatchEvent(evObj);
-      }
-    }
+    
 
 
    function cleanTnakns(form){
@@ -400,3 +392,13 @@ $(document).ready(function(){
     });
 
 });
+
+// function eventFire(el, etype){
+//       if (el.fireEvent) {
+//         el.fireEvent('on' + etype);
+//       } else {
+//         var evObj = document.createEvent('Events');
+//         evObj.initEvent(etype, true, false);
+//         el.dispatchEvent(evObj);
+//       }
+//     }
