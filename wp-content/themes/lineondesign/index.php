@@ -12,6 +12,8 @@
 	<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/libs/fancybox/jquery.fancybox.css" />
 	<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/libs/owl.carousel/assets/owl.carousel.css" />
 	<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/libs/wow/animate.css">
+	<link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/libs/slick/slick.css"/>
+	<link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/libs/slick/slick-theme.css"/>
 	<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/style.css">
 	<link rel="shortcut icon" href="favicon.ico" />
 	<?php wp_head(); ?>
@@ -23,6 +25,7 @@
 	<script src="<?php echo get_template_directory_uri(); ?>/js/jquery.mousewheel.js"></script>
 	<script src="<?php echo get_template_directory_uri(); ?>/libs/wow/wow.min.js"></script>
 	<script src="<?php echo get_template_directory_uri(); ?>/js/jquery.maskedinput.min.js"></script>
+	<script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/libs/slick/slick.min.js"></script>
 	<script src="<?php echo get_template_directory_uri(); ?>/js/common.js"></script>
 
 	<script>
@@ -126,19 +129,19 @@
 				<div class="col-md-4">
 					<div class="project-item">
 						<img src="<?php echo get_template_directory_uri(); ?>/img/t1.jpg" alt="">
-						<a href="#" href="#">Совеременная <br>классика</a>
+						<a href="#package1" data-name="packageModal">Совеременная <br>классика</a>
 					</div>
 				</div>
 				<div class="col-md-4">
 					<div class="project-item">
 						<img src="<?php echo get_template_directory_uri(); ?>/img/t2.jpg" alt="">
-						<a href="#" href="#">Минимализм</a>
+						<a  href="#package2" data-name="packageModal">Минимализм</a>
 					</div>
 				</div>
 				<div class="col-md-4">
 					<div class="project-item">
 						<img src="<?php echo get_template_directory_uri(); ?>/img/t3.jpg" alt="">
-						<a href="#" href="#">Чистые линии</a>
+						<a  href="#package3" data-name="packageModal">Чистые линии</a>
 					</div>
 				</div>
 				<div class="clearfix"></div>
@@ -206,7 +209,7 @@
 				<div class="col-md-4">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p1.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>НАШИ СПЕЦИАЛИСТЫ</span>
@@ -229,7 +232,7 @@
 				<div class="col-md-4">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p2.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p2.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>РАЦИОНАЛЬНОЕ  <br>БЮДЖЕТИРОВАНИЕ </span>
@@ -251,7 +254,7 @@
 				<div class="col-md-4 ">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p3.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p3.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>ИНДИВИДУАЛЬНЫЙ ПОДХОД</span>
@@ -276,7 +279,7 @@
 				<div class="col-md-4 col-md-offset-2">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p4.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p4.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>АВТОРСКИЙ НАДЗОР</span>
@@ -297,7 +300,7 @@
 				<div class="col-md-4">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p5.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p5.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>МНОГОПРОФИЛЬНОСТЬ</span>
@@ -512,6 +515,330 @@
 		</form>
 	</div>
 
+	<div id="getPackage" class="window"> 
+		<form action="" class="common-form form-getPackage">
+			<span class="close"></span>
+			<span class="form-title">ОСТАВЬТЕ ВАШЕ ИМЯ И НОМЕР <br>
+				ТЕЛЕФОНА И МЫ С ВАМИ <br>
+				СВЯЖЕМСЯ В БЛИЖАШЕЕ <br>
+				ВРЕМЯ11</span>
+			<input type="text" name="uname" placeholder="Введите Ваш имя">
+			<input type="text" name="tel" placeholder="Введите Ваш телефон" class="phone">
+			<input type="text" name="email" placeholder="Введите Ваш email">
+			<input type="hidden" name="form" value="Форма - купить интерьер">
+			<input type="submit" id="form1_submit" class="button-2" value="Купить интерьер">
+		</form>
+	</div>
+
+
+
+	<div id="package1" class="window package-window"> 
+		<span class="close"></span>
+		<div class="package__left">
+			<div class="product-main-slider">
+				<div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_1.jpg" class="fancybox-img">
+			        <img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_1_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+
+			    <div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_2.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_2_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+
+			    <div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_3.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_3_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+			
+				<div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_4.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_4_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+			
+				<div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_5.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_5_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+				
+				<div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_6.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_6_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+	    	</div>
+	    	<div class="product-thumb-slider row">
+
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_1.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_1_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_2.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_2_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_3.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_3_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_4.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_4_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_5.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_5_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p1/p1_6.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1_6_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				
+			 
+			</div>
+		</div>
+		<div class="package__right">
+			<div class="center">	
+				<h4>ГОТОВЫЙ ДИЗАЙНЕРСКИЙ ИНТЕРЬЕР <br>«СОВРЕМЕННАЯ КЛАССИКА»</h4>
+			</div>
+			<p>
+				Этот элегантный интерьер создан в стилистике современной классики, которая, 
+				как известно, «вне времени». В проекте использованы уникальные сочетания 
+				материалов, предметы интерьера российских дизайнеров и мировых брендов, 
+				благодаря чему достигается эксклюзивность и сохраняется функциональность.
+			</p>
+			<i>*Для тех, кто хочет получить детально продуманный и комфортный дизайнерский интерьер.</i>
+			<div class="package-feachers">
+				<div class="package-feachers__left">
+					<b>В пакете:</b>
+					<ul>
+						<li>планировка (адаптация к Вашей, конкретной  планировке данного готового  интерьера)</li>
+						<li>архитектурные чертежи, планы, развертки</li>
+						<li>коллажи</li>
+						<li>3D эскизы</li>
+					</ul>
+				</div>
+				<div class="package-feachers__right">
+					<b>Предусмотрены дополнительные услуги:</b>
+					<ul>
+						<li>спецификация с перечнем отделочных материалов, предметов интерьера и  мебели</li>
+						<li>последующая помощь в осуществлении ремонтных работ и комплектации Вашего интерьера </li>
+						<li>выезд дизайнера (при необходимости) на объект</li>
+						<li>декорирование</li>
+					</ul>
+				</div>
+				<div class="clear"></div>
+			</div>
+			
+			<div class="center">
+				<a href="#getPackage" name="modal" class="button-1 buyInterer">КУПИТЬ ИНТЕРЬЕР</a>
+			</div>
+		</div>
+		<div class="clear"></div>
+	</div>
+
+
+	<div id="package2" class="window package-window"> 
+		<span class="close"></span>
+		<div class="package__left">
+			<div class="product-main-slider">
+				<div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_1.jpg" class="fancybox-img">
+			        <img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_1_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+
+			    <div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_2.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_2_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+
+			    <div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_3.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_3_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+			
+				<div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_4.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_4_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+			
+				<div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_5.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_5_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+	    	</div>
+	    	<div class="product-thumb-slider row">
+
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_1.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_1_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_2.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_2_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_3.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_3_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_4.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_4_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p2/p2_5.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p2/p2_5_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="package__right">
+			<div class="center">	
+				<h4>ГОТОВЫЙ ДИЗАЙНЕРСКИЙ ИНТЕРЬЕР <br> «МИНИМАЛИЗМ»</h4>
+			</div>
+			<p>
+				Минимализм оформился в 70-х годах прошлого века как своеобразный протест против динамичного и кричащего поп-арта. Минимализм – немного больше, чем стиль в архитектуре и дизайне, это образ жизни.</p>
+			<i>*Этот стиль выбирают для себя целостные натуры. Яркие акценты в этом интерьере помогают придать пространству особую индивидуальность.</i>
+			<div class="package-feachers">
+				<div class="package-feachers__left">
+					<b>В пакете:</b>
+					<ul>
+						<li>планировка (адаптация к Вашей, конкретной  планировке данного готового  интерьера)</li>
+						<li>архитектурные чертежи, планы, развертки</li>
+						<li>коллажи</li>
+						<li>3D эскизы</li>
+					</ul>
+				</div>
+				<div class="package-feachers__right">
+					<b>Предусмотрены дополнительные услуги:</b>
+					<ul>
+						<li>спецификация с перечнем отделочных материалов, предметов интерьера и  мебели</li>
+						<li>последующая помощь в осуществлении ремонтных работ и комплектации Вашего интерьера </li>
+						<li>выезд дизайнера (при необходимости) на объект</li>
+						<li>декорирование</li>
+					</ul>
+				</div>
+				<div class="clear"></div>
+			</div>
+			
+			<div class="center">
+				<a href="#getPackage" name="modal" class="button-1 buyInterer">КУПИТЬ ИНТЕРЬЕР</a>
+			</div>
+		</div>
+		<div class="clear"></div>
+	</div>
+
+	<div id="package3" class="window package-window"> 
+		<span class="close"></span>
+		<div class="package__left">
+			<div class="product-main-slider">
+				<div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p3/p3_1.jpg" class="fancybox-img">
+			        <img src="<?php echo get_template_directory_uri(); ?>/img/p3/p3_1_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+
+			    <div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p3/p3_2.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p3/p3_2_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+
+			    <div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p3/p3_3.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p3/p3_3_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+			
+				<div>
+			      <a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p3/p3_4.jpg" class="fancybox-img">
+			          <img src="<?php echo get_template_directory_uri(); ?>/img/p3/p3_4_big_thumb.jpg" alt="">
+			      </a>
+			    </div>
+			
+				
+	    	</div>
+	    	<div class="product-thumb-slider row">
+
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p3/p3_1.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p3/p3_1_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p3/p3_2.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p3/p3_2_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p3/p3_3.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p3/p3_3_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+				<div class="col-sm-4">
+					<a rel="group3" href="<?php echo get_template_directory_uri(); ?>/img/p3/p3_4.jpg" class="fancybox-img">
+						<img src="<?php echo get_template_directory_uri(); ?>/img/p3/p3_4_sm_thumb.jpg" alt="">
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="package__right">
+			<div class="center">	
+				<h4>ГОТОВЫЙ ДИЗАЙНЕРСКИЙ ИНТЕРЬЕР <br> «ЧИСТЫЕ ЛИНИИ»</h4>
+			</div>
+			<p>
+				В основу этого решения легли лаконичные формы, сдержанная цветовая гамма, выверенные пропорции. Главной задачей данного стиля, в котором отражаются нотки скандинавского интерьера, является обустройство светлого и уютного помещения. 
+			</p>
+			<i>*Для тех, кто ценит лаконичность. Выгодное решение для квартир с небольшой площадью.</i>
+			<div class="package-feachers">
+				<div class="package-feachers__left">
+					<b>В пакете:</b>
+					<ul>
+						<li>планировка (адаптация к Вашей, конкретной  планировке данного готового  интерьера)</li>
+						<li>архитектурные чертежи, планы, развертки</li>
+						<li>коллажи</li>
+						<li>3D эскизы</li>
+					</ul>
+				</div>
+				<div class="package-feachers__right">
+					<b>Предусмотрены дополнительные услуги:</b>
+					<ul>
+						<li>спецификация с перечнем отделочных материалов, предметов интерьера и  мебели</li>
+						<li>последующая помощь в осуществлении ремонтных работ и комплектации Вашего интерьера </li>
+						<li>выезд дизайнера (при необходимости) на объект</li>
+						<li>декорирование</li>
+					</ul>
+				</div>
+				<div class="clear"></div>
+			</div>
+			
+			<div class="center">
+				<a href="#getPackage" name="modal" class="button-1 buyInterer">КУПИТЬ ИНТЕРЬЕР</a>
+			</div>
+		</div>
+		<div class="clear"></div>
+	</div>
+
 	<div id="infowin2" class="window"> 
 		<form action="" class="common-form form2">
 			<span class="close"></span>
@@ -593,6 +920,9 @@
 	</div>
 
 	<a href="#thanks" name="modal"></a>
+
+	<div class="toTop"><i class="fa fa-angle-up" aria-hidden="true"></i></div>
+
 
 </body>
 </html>
