@@ -911,7 +911,7 @@ input, textarea{
         padding: 110px 0px 60px 0px !important;
         .title{
             display: block;
-            text-align: left;
+            text-align: justify;
             font-size: 45px;
             padding-left: 128px;
             padding-right: 30px;
@@ -1073,6 +1073,7 @@ input, textarea{
     p{
         margin-bottom: 28px;
         font-size: 21px;
+        text-align: justify;
     }
     .osnavatel__img{
         width:100%;

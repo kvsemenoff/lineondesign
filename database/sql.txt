@@ -1,2 +1,2 @@
-UPDATE wp_posts SET guid = REPLACE(guid, 'alex-auto55.ru', 'alex-avto3.loc');
-UPDATE wp_options SET option_value = REPLACE(option_value, 'alex-auto55.ru', 'alex-avto3.loc');
+UPDATE wp_posts SET guid = REPLACE(guid, 'lineondesign.com', 'lineondesign4.loc');
+UPDATE wp_options SET option_value = REPLACE(option_value, 'lineondesign.com', 'lineondesign4.loc');

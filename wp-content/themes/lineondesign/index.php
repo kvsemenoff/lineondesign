@@ -106,7 +106,7 @@
     				</div>
    				</div>
    				<div class="col-md-9">
-    				<p>Основателем и главным дизайнером студии "LineOnDesign" Корсаковой Юлией, было разработано новое направление деятельности - "Готовые интерьерные решения"</p>
+    				<p>Основателем и главным дизайнером студии "LineOnDesign" Корсаковой Юлией, было разработано новое направление деятельности - "Готовые интерьерные решения".</p>
 
    					 <p>На данный момент Вашему вниманию представлены три варианта готовых интерьеров. 
    						 Алгоритм прост: Вы выбираете понравившийся «дизайн», который можно будет 
@@ -203,13 +203,13 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
-					<h2>УЗНАЙТЕ, КАК МЫ ПОМОЖЕМ СОЗДАТЬ <br>ВАМ ИДЕАЛЬНЫЙ ИНТЕРЬЕР33</h2>
+					<h2>УЗНАЙТЕ, КАК МЫ ПОМОЖЕМ СОЗДАТЬ <br>ВАМ ИДЕАЛЬНЫЙ ИНТЕРЬЕР</h2>
 				</div>
 				<div class="clearfix"></div>
 				<div class="col-md-4">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p1.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p1.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>НАШИ СПЕЦИАЛИСТЫ</span>
@@ -232,7 +232,7 @@
 				<div class="col-md-4">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p2.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p2.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>РАЦИОНАЛЬНОЕ  <br>БЮДЖЕТИРОВАНИЕ </span>
@@ -254,7 +254,7 @@
 				<div class="col-md-4 ">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p3.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p3.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>ИНДИВИДУАЛЬНЫЙ ПОДХОД</span>
@@ -279,7 +279,7 @@
 				<div class="col-md-4 col-md-offset-2">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p4.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p4.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>АВТОРСКИЙ НАДЗОР</span>
@@ -300,7 +300,7 @@
 				<div class="col-md-4">
 					<div class="findout-box">
 						<div class="img-box">
-							<img src="<?php echo get_template_directory_uri(); ?>/img/p1/p5.png" alt="">
+							<img src="<?php echo get_template_directory_uri(); ?>/img/p5.png" alt="">
 						</div>	
 						<div class="title-box">
 							<span>МНОГОПРОФИЛЬНОСТЬ</span>

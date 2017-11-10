@@ -740,7 +740,7 @@ input, textarea {
     padding: 110px 0px 60px 0px !important; }
     .page1 .title {
       display: block;
-      text-align: left;
+      text-align: justify;
       font-size: 45px;
       padding-left: 128px;
       padding-right: 30px;
@@ -863,7 +863,8 @@ input, textarea {
       padding-top: 120px; } }
   .osnovatel p {
     margin-bottom: 28px;
-    font-size: 21px; }
+    font-size: 21px;
+    text-align: justify; }
   .osnovatel .osnavatel__img {
     width: 100%;
     text-align: center; }
