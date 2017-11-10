@@ -118,6 +118,9 @@ h4{
     }
 
 }
+.justify{
+	text-align: justify;
+}
 .clear{
     clear: both;
 }
@@ -368,9 +371,6 @@ h4{
         color: #8d8d8d;
         font-size: 14px;
         margin-bottom: 55px;
-    }
-    .desc{
-        text-align: left;
     }
     p{
         margin-bottom: 25px;
@@ -1078,6 +1078,9 @@ input, textarea{
     .osnavatel__img{
         width:100%;
         text-align: center;
+        img{
+        	max-width: 70%;
+        }
     }
     @media only screen and (min-width : 768px) {
         p{

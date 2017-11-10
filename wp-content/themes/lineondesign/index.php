@@ -366,7 +366,7 @@
 				</div>
 				<div class="col-md-6 col-sm-8 col-xs-12">
 					
-					<div class="desc">
+					<div class="desc justify">
 						<?php echo $glav_text; ?>
 					</div>
 				</div>
@@ -397,7 +397,7 @@
 								</div>	
 								<div class="desc">
 									<span class="title"><?php the_title(); ?></span> <br>
-									<div class="desc-text">
+									<div class="desc-text justify">
 										<?php echo get_the_content(); ?>
 									</div>
 								</div>	
